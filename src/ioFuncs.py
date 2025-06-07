@@ -2,6 +2,8 @@ import kagglehub
 import os
 import pandas as pd
 import json
+from gensim.models import LdaModel
+
 
 def read_raw_main(Data_path):
 
@@ -88,8 +90,32 @@ def read_preprocessed(data_path, notebook_env):
         return temp_df
     else:
         return None
+    
+def read_tokenized(data_path, notebook_env):
+    if notebook_env == "test":
+        dataset_name = "spacy_tokenized_sample.pkl"
+    else:
+        dataset_name = "spacy_tokenized_allData.pkl"
 
+    dataset_path = os.path.join(data_path, dataset_name)
 
+    if os.path.isfile(dataset_path):
+        tokenized_texts = pd.read_pickle(dataset_path)
+        print("Loaded from drive.")
+        return tokenized_texts
+    else:
+        return None
+
+def load_lda_model(models_path):
+    model_name = "GensimLdaModel_SpacyTokens_TopicCount20"
+    # retrain with 20 topics or load back
+    model_path_temp = os.path.join(models_path, model_name)
+
+    if os.path.isfile(model_path_temp):
+        lda_model = LdaModel.load(model_path_temp)
+        return lda_model
+    else:
+        return None
 
 if __name__ == "__main__":
 
